@@ -1,0 +1,41 @@
+
+How to configure shadowsocks on ubuntu 18.04
+
+1.0 Install shadowsocks with: sudo apt install shadowsocks
+
+2.0 Create shadowsocks.json with following format:
+
+{
+        "server":"52.xxx.xxx.81",
+        "server_port":8388,
+        "local_port":1080,
+        "password":"xxxxxx",
+        "timeout":600,
+        "method":"aes-256-cfb"
+}
+
+3.0 Run sslocal -c /path/to/shadowsocks.json
+
+4.0 Conigure your broswer proxy for socket5 (I use foxyProxy for firefox) or you can confiure the global desktop sock5 proxy in network settings on ubuntu
+
+How to congiure shadowsocks to run automatically when os reboot
+
+1.0 Install supervisor with: sudo apt-get install supervisor
+
+2.0 Create a ss.conf in /etc/supervisor/conf.d and write below content
+
+[program:shadowsocks]
+command=sslocal -c /path/to/shadowsocks.json
+autostart=true
+autorestart=true
+user=root
+log_stderr=true
+logfile=/var/log/shadowsocks.log
+
+3.0 Copy sslocal binary to /bin: sudo cp /usr/bin/sslocal /bin
+
+4.0 Create or open /etc/rc.local and add "service supervisor start" before "exit 0"
+	NOTE: all command before exit 0 will be run as root in rc.local file. if this file does not exist, just create it and add 2 lines: 
+		1 for service supervisor start and 1 for exit 0
+
+Using shadowsocks with command line tool: https://github.com/shadowsocks/shadowsocks/wiki/Using-Shadowsocks-with-Command-Line-Tools
